@@ -25,4 +25,8 @@ public class Profile {
     public String getEmail() {
         return email;
     }
+
+    public String toString() {
+        return "Profile: "+getFirstName()+" "+getLastName()+", "+getEmail();
+    }
 }
