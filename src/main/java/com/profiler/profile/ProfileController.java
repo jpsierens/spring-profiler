@@ -3,6 +3,7 @@ package com.profiler.profile;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * Created by jpsierens on 8/29/18.
@@ -26,14 +27,9 @@ public class ProfileController {
     @GetMapping(value="/profile")
     public Profile getProfile(@RequestParam(value = "email") String email) throws Exception {
         System.out.println("Retrieving: "+profileDB.get(email));
-        Profile profile = profileDB.get(email);
-        if (profile == null) {
-            throw new Exception("email doesnt exist");
-        } else {
-            return profile;
-        }
+        return Optional.ofNullable(profileDB.get(email))
+                .orElseThrow(() -> new Exception("email doesnt exist"));
     }
-
 
     @PutMapping(value="/profile")
     public void updateProfile(
@@ -48,11 +44,8 @@ public class ProfileController {
 
     @DeleteMapping(value="/profile")
     public void deleteprofile(@RequestParam(value = "email") String email) throws Exception {
-        Profile profile = profileDB.get(email);
-        if (profile == null) {
-            throw new Exception("email doesnt exist");
-        } else {
-            profileDB.remove(email);
-        }
+        Optional<Profile> emailFromDB = Optional.ofNullable(profileDB.get(email));
+        emailFromDB.ifPresent((profile) -> profileDB.remove(email));
+        emailFromDB.orElseThrow(() -> new Exception("email doesnt exist"));
     }
 }
